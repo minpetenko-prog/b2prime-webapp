@@ -78,12 +78,7 @@
         }
 
         setTimeout(function() {
-          if (tg && tg.openLink) {
-            tg.openLink(landingUrl);
-            setTimeout(function() { tg.close(); }, 300);
-          } else {
-            window.location.href = landingUrl;
-          }
+          window.location.href = landingUrl;
         }, 1000);
 
       } catch (err) {
