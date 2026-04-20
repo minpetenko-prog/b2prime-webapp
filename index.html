@@ -38,7 +38,19 @@
   <script>
     (function() {
       var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbweadlDzQmYfQS8QQt2QMFsFdxvejAQbnaE4jWmlu8EYfli5a7kCnKxzG8kLwbPM-N3NA/exec';
-      var LANDING = 'https://b2prime.com/register';
+
+      // Маппинг коротких кодов → URL лендингов
+      // Добавляй новые лендинги сюда
+      var LANDINGS = {
+        'features': 'https://b2prime.com/low-spread-trading?utm_source=telegram&utm_medium=paid&utm_campaign=anchor&utm_content=features',
+        'unified': 'https://b2prime.com/low-spread-trading?utm_source=telegram&utm_medium=paid&utm_campaign=anchor&utm_content=unified',
+        'tradingview': 'https://b2prime.com/platforms/tradingview?utm_source=telegram&utm_medium=post&utm_campaign=tradingview',
+        'default': 'https://b2prime.com'
+      };
+
+      // Определяем лендинг: startapp параметр из Telegram или ?landing= из URL
+      var params = new URLSearchParams(window.location.search);
+      var landingCode = params.get('landing') || '';
       var debug = document.getElementById('debug');
 
       try {
@@ -56,8 +68,15 @@
             username = user.username || '';
             firstName = user.first_name || '';
           }
-          debug.textContent = 'uid=' + userId;
+          // Читаем startapp параметр (код лендинга)
+          if (!landingCode && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+            landingCode = tg.initDataUnsafe.start_param;
+          }
+          debug.textContent = 'uid=' + userId + ' lp=' + landingCode;
         }
+
+        // Определяем URL лендинга по коду
+        var LANDING = LANDINGS[landingCode] || LANDINGS['default'];
 
         // Трекаем клик через GET-запрос к Apps Script
         if (userId) {
@@ -65,8 +84,8 @@
             + '?action=track'
             + '&uid=' + encodeURIComponent(userId)
             + '&uname=' + encodeURIComponent(username)
-            + '&fname=' + encodeURIComponent(firstName);
-          // Fire and forget — не ждём ответа
+            + '&fname=' + encodeURIComponent(firstName)
+            + '&lp=' + encodeURIComponent(landingCode);
           var img = new Image();
           img.src = trackUrl;
         }
