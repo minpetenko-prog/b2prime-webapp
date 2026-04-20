@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2Prime</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .loader { text-align: center; padding: 40px 20px; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #e0e0e0; border-top-color: #2481cc;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    p { font-size: 14px; color: #888; }
+    #debug { font-size: 11px; color: #aaa; margin-top: 20px; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+    <p id="status">Переход на сайт...</p>
+    <p id="debug"></p>
+  </div>
+
+  <script>
+    (function() {
+      var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbweadlDzQmYfQS8QQt2QMFsFdxvejAQbnaE4jWmlu8EYfli5a7kCnKxzG8kLwbPM-N3NA/exec';
+      var LANDING = 'https://b2prime.com/register';
+      var debug = document.getElementById('debug');
+
+      try {
+        var tg = window.Telegram && window.Telegram.WebApp;
+        var userId = '';
+        var username = '';
+        var firstName = '';
+
+        if (tg) {
+          tg.ready();
+          tg.expand();
+          var user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+          if (user && user.id) {
+            userId = user.id;
+            username = user.username || '';
+            firstName = user.first_name || '';
+          }
+          debug.textContent = 'uid=' + userId;
+        }
+
+        // Трекаем клик через GET-запрос к Apps Script
+        if (userId) {
+          var trackUrl = SCRIPT_URL
+            + '?action=track'
+            + '&uid=' + encodeURIComponent(userId)
+            + '&uname=' + encodeURIComponent(username)
+            + '&fname=' + encodeURIComponent(firstName);
+          // Fire and forget — не ждём ответа
+          var img = new Image();
+          img.src = trackUrl;
+        }
+
+        // Редирект
+        var landingUrl = LANDING;
+        if (userId) {
+          landingUrl += (landingUrl.indexOf('?') > -1 ? '&' : '?') + 'tg_uid=' + userId;
+        }
+
+        setTimeout(function() {
+          if (tg && tg.openLink) {
+            tg.openLink(landingUrl);
+            setTimeout(function() { tg.close(); }, 300);
+          } else {
+            window.location.href = landingUrl;
+          }
+        }, 1000);
+
+      } catch (err) {
+        debug.textContent = 'Error: ' + err.message;
+      }
+    })();
+  </script>
+</body>
+</html>
