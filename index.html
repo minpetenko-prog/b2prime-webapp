@@ -72,7 +72,7 @@
           if (!landingCode && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
             landingCode = tg.initDataUnsafe.start_param;
           }
-          debug.textContent = 'uid=' + userId + ' lp=' + landingCode;
+          // debug info hidden in production
         }
 
         // Определяем URL лендинга по коду
@@ -97,7 +97,12 @@
         }
 
         setTimeout(function() {
-          window.location.href = landingUrl;
+          if (tg && tg.openLink) {
+            tg.openLink(landingUrl);
+            tg.close();
+          } else {
+            window.location.href = landingUrl;
+          }
         }, 1000);
 
       } catch (err) {
