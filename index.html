@@ -39,12 +39,23 @@
     (function() {
       var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwke60ouKuMUBI2ct1Uiz_btk1ReGHvOV9qJ1juVrj49M2tNbOniSO5LowGBlyMm-xjCg/exec';
 
-      // Маппинг коротких кодов → URL лендингов
-      // Добавляй новые лендинги сюда
+      // Маппинг коротких кодов → URL лендингов.
+      // Конвенция: префикс pp_ = pinpost (закрепы в канале), без префикса = реклама (ads).
+      // При добавлении новых типов постов с другим utm_campaign — заводим новый префикс.
       var LANDINGS = {
+        // Рекламные (utm_campaign=anchor / tradingview)
         'features': 'https://b2prime.com/low-spread-trading?utm_source=telegram&utm_medium=paid&utm_campaign=anchor&utm_content=features',
         'unified': 'https://b2prime.com/trusted-broker?utm_source=telegram&utm_medium=paid&utm_campaign=anchor&utm_content=unified',
         'tradingview': 'https://b2prime.com/platforms/tradingview?utm_source=telegram&utm_medium=post&utm_campaign=tradingview',
+        // Пин-пост в канале (utm_campaign=pinpost)
+        'pp_features': 'https://b2prime.com/low-spread-trading?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=single+cross-collateral+account',
+        'pp_unified': 'https://b2prime.com/trusted-broker?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=explore+the+full+setup+here',
+        'pp_tradingview': 'https://b2prime.com/platforms/tradingview?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=tradingview',
+        'pp_ctrader': 'https://b2prime.com/trading-technology?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=ctrader#ctrader',
+        'pp_b2trader': 'https://b2prime.com/trading-technology?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=b2trader#b2trader',
+        'pp_account': 'https://b2prime.com/?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=openyouraccount',
+        'pp_overview': 'https://b2prime.com/account-types/overview?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=overview',
+        'pp_legal': 'https://b2prime.com/legal?utm_source=telegram&utm_medium=paid&utm_campaign=pinpost&utm_content=legal',
         'default': 'https://b2prime.com'
       };
 
